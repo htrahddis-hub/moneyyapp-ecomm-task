@@ -19,13 +19,14 @@ const productSlice = createSlice({
       const newCart = state.value.filter(
         (item) => item.id !== action.payload.product.id
       );
-      if (item) {
+      if (item.review) {
+
         item.review.push(action.payload.review);
         state.value = [...newCart, item];
-        state.value.cart = state.value.cart.sort((a, b) => a.id - b.id);
+        state.value = state.value.sort((a, b) => a.id - b.id);
       } else {
-        state.value = [...state.value, { ...action.payload, review: [action.payload.review] }];
-        state.value.cart = state.value.cart.sort((a, b) => a.id - b.id);
+        state.value = [...newCart, { ...action.payload.product, review: [action.payload.review] }];
+        state.value = state.value.sort((a, b) => a.id - b.id);
       }
     },
   },
@@ -33,7 +34,6 @@ const productSlice = createSlice({
     builder.addCase(getProduct.fulfilled, (state, action) => {
       state.status = "idle";
       state.value = action.payload;
-      console.log(state.value);
     });
   },
 });

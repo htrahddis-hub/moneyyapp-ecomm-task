@@ -8,17 +8,32 @@ import "./products.css";
 const Products = (props) => {
   const [toggleModal, setToggleModal] = React.useState(false);
   const [productData, setProductData] = React.useState(false);
+  const [review, setReview] = React.useState("");
+  const [allReview,setAllReview]= React.useState([]);
+
   const product = useSelector(selectProducts);
   const dispatch = useDispatch();
-  const modal = (id) => {
-    setProductData(id);
-    console.log(id);
+
+  const modal = (data) => {
+    setProductData(data);
+    if(data.review)
+      setAllReview(data.review);
     setToggleModal(true);
   };
 
   const handleReview = (event) => {
     event.preventDefault();
-    dispatch(addReview({ product: productData, review: "review" }));
+    dispatch(addReview({ product: productData, review: review }));
+    setAllReview((data)=>[...data,review]);
+    setReview('');
+  };
+
+  const handleClick = (event) => {
+    if (event.target.className === "modal fade show") setToggleModal(false);
+  };
+
+  const handleChange = (event) => {
+    setReview(event.target.value);
   };
 
   useEffect(() => {
@@ -33,7 +48,7 @@ const Products = (props) => {
   }, [dispatch]);
 
   return (
-    <div>
+    <div onClick={handleClick}>
       {product.length > 0 ? (
         <div
           className={
@@ -89,18 +104,7 @@ const Products = (props) => {
                       >
                         <div className="carousel-inner">
                           <div className="carousel-item active">
-                            <p className="lead font-italic mx-4 mx-md-5">
-                              "Lorem ipsum dolor sit amet, consectetur
-                              adipisicing elit. Fugit, error amet numquam iure
-                              provident voluptate esse quasi, voluptas nostrum
-                              quisquam!"
-                            </p>
-
-                            <p className="text-muted mb-0">- Anna Morian</p>
-                          </div>
-
-                          <div className="carousel-item">
-                            <p className="lead font-italic mx-4 mx-md-5">
+                            <p className="lead font-italic mx-4 mx-md-5 px-5">
                               "Neque cupiditate assumenda in maiores repudiandae
                               mollitia adipisci maiores repudiandae mollitia
                               consectetur adipisicing architecto elit sed
@@ -109,17 +113,27 @@ const Products = (props) => {
 
                             <p className="text-muted mb-0">- Teresa May</p>
                           </div>
-
-                          <div className="carousel-item">
-                            <p className="lead font-italic mx-4 mx-md-5">
-                              "Duis aute irure dolor in reprehenderit in
-                              voluptate velit esse cillum dolore eu fugiat nulla
-                              pariatur est laborum neque cupiditate assumenda in
-                              maiores."
+                          <div className="carousel-item ">
+                            <p className="lead font-italic mx-4 mx-md-5 px-5">
+                              "Neque cupiditate assumenda in maiores repudiandae
+                              mollitia adipisci maiores repudiandae mollitia
+                              consectetur adipisicing architecto elit sed
+                              adipiscing elit."
                             </p>
 
-                            <p className="text-muted mb-0">- Kate Allise</p>
+                            <p className="text-muted mb-0">- Teresa May</p>
                           </div>
+                          {allReview.map((item, idx) => {
+                            return (
+                              <div className="carousel-item">
+                                <p className="lead font-italic mx-4 mx-md-5 px-5">
+                                  {}
+                                </p>
+                                {item}
+                                <p className="text-muted mb-0">- user1</p>
+                              </div>
+                            );
+                          })}
                         </div>
 
                         <button
@@ -160,6 +174,8 @@ const Products = (props) => {
                     <textarea
                       className="form-control "
                       aria-label="With textarea"
+                      onChange={handleChange}
+                      value={review}
                     ></textarea>
                   </div>
                   <button
